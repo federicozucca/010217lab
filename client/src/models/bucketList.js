@@ -1,15 +1,18 @@
-var BucketList = function(){
+var CountryList = require('./countryList')
 
+var BucketList = function(){
+  var countriesList = new CountryList;
+  var countryList = countriesList.all();
 }
 
 BucketList.prototype = {
-  makeRequest: function(method, url, callback, payload){
+  makeRequest: function(method, url, callback, data){
     var request = new XMLHttpRequest();
 
     request.open(method, url);
     request.setRequestHeader("Content-type", "application/json");
     request.onload = callback;
-    request.send(payload);
+    request.send(data);
   },
 
   all: function(callback){
@@ -21,6 +24,7 @@ BucketList.prototype = {
 
       var countries = self.populateCountries(results);
       callback(countries);
+      console.log("2nd log")
     });
   },
 

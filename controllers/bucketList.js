@@ -22,17 +22,16 @@ bucketListRouter.get('/:id', function(req, res){
 });
 
 
-// //add new country
-// bucketListRouter.post('/', function(req, res) {
-//   console.log(req.body)
-//   var country = new country({
-//     title: req.body.title,
-//     actors: req.body.actors 
-//   });
-//   query.add(country,function(results){ 
-//       res.json(results);
-//     });
-// });
+//add new country
+bucketListRouter.post('/', function(req, res) {
+  console.log(req.body)
+  var country = new country({
+    name: req.body.name
+  });
+  query.add(country,function(results){ 
+      res.json(results);
+    });
+});
 
 //delete country
 bucketListRouter.delete('/:id', function(req, res) {

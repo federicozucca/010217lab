@@ -5,13 +5,13 @@ var CountryList = function () {
 }
 
 CountryList.prototype = {
-  makeRequest: function(method, url, callback, payload){
+  makeRequest: function(method, url, callback, data){
     var request = new XMLHttpRequest();
 
     request.open(method, url);
-    request.setRequestHeader("Content-type", "application/json");
+    // request.setRequestHeader("Content-type", "application/json");
     request.onload = callback;
-    request.send(payload);
+    request.send(data);
   },
   
   all: function(callback){
@@ -20,6 +20,7 @@ CountryList.prototype = {
       if(this.status !== 200) return;
       var jsonString = this.responseText;
       var results = JSON.parse(jsonString);
+      console.log(results)
 
       var countries = self.populateCountries(results);
       callback(countries);
@@ -29,7 +30,7 @@ CountryList.prototype = {
   populateCountries: function (results) {
     var countries = [];
 
-    for (var country of results){
+    for (var result of results){
       var country = new Country(result);
       countries.push(country);
     }

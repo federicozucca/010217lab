@@ -57,36 +57,47 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var BucketList = __webpack_require__(2)
+	var CountryList = __webpack_require__(3)
 	
 	var UI = function(){
-	  var bucketList = new BucketList();
-	  bucketList.all(function(result){
+	  var countryList = new CountryList();
+	  countryList.all(function(result){
 	    this.render(result);
 	  }.bind(this));
+	  console.log(countryList)
 	}
 	
 	UI.prototype = {
 	
-	  createText: function(text, label) {
-	    var p = document.createElement('p');
-	    p.innerText = label + text;
-	    return p;
+	  createOption: function(select, country){
+	    var option = document.createElement('option');
+	    option.innerText = country.name;
+	    select.appendChild(option);
 	  },
 	
-	  appendText: function(element, text, label) {
-	    var pTag = this.createText(text, label);
-	    element.appendChild(pTag);
-	  },
-	
-	  render: function(bucketList) {
+	  render: function(countryList) {
 	    var container = document.getElementById('bucketList');
+	    var select = document.createElement("select");
+	    var button = document.createElement("button");
+	    button.innerText = "Add"
 	
-	    for (var country of bucketList) {
-	      var li = document.createElement('li');
-	      this.appendText(li, country.name, "Country name: ");
-	      this.appendText(li, country.region, "Region name: ");
-	      container.appendChild(li);
+	    for (var country of countryList) {
+	      this.createOption(select, country)
+	    }
+	    container.appendChild(select);
+	    container.appendChild(button);
+	    button.onclick = function(){
+	      console.log(select.value)
+	      var request = new XMLHttpRequest();
+	      request.open("POST", "http://localhost:3000/api/bucketlist");
+	      request.setRequestHeader("Content-type", "application/json");
+	      
+	      request.onload = function(){
+	        
+	        console.log("we tried...");
+	      }
+	      // console.log(results)
+	      request.send({name: select.value});
 	    }
 	  }
 	}
@@ -96,49 +107,67 @@
 
 
 /***/ },
-/* 2 */
-/***/ function(module, exports) {
+/* 2 */,
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
 
-	var BucketList = function(){
+	var Country = __webpack_require__(4)
+	
+	var CountryList = function () {
 	
 	}
 	
-	BucketList.prototype = {
-	  makeRequest: function(method, url, callback, payload){
+	CountryList.prototype = {
+	  makeRequest: function(method, url, callback, data){
 	    var request = new XMLHttpRequest();
 	
 	    request.open(method, url);
-	    request.setRequestHeader("Content-type", "application/json");
+	    // request.setRequestHeader("Content-type", "application/json");
 	    request.onload = callback;
-	    request.send(payload);
+	    request.send(data);
 	  },
-	
+	  
 	  all: function(callback){
 	    var self = this;
-	    this.makeRequest("GET", "http://localhost:3000/api/bucketlist", function(){
+	    this.makeRequest("GET", "https://restcountries.eu/rest/v1/all", function(){
 	      if(this.status !== 200) return;
 	      var jsonString = this.responseText;
 	      var results = JSON.parse(jsonString);
+	      console.log(results)
 	
 	      var countries = self.populateCountries(results);
 	      callback(countries);
 	    });
-	  },
+	  }, 
 	
 	  populateCountries: function (results) {
 	    var countries = [];
 	
-	    for (var country of results){
+	    for (var result of results){
 	      var country = new Country(result);
 	      countries.push(country);
 	    }
 	    return countries
 	  }
 	
+	
 	}
 	
-	module.exports = BucketList;
+	module.exports = CountryList;
 
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	var Country = function (options) {
+	  this.name = options.name;
+	  this.capitalCity = options.capital;
+	  this.population = options.population;
+	  this.region = options.region;
+	  this.subRegion = options.subregion;
+	}
+	
+	module.exports = Country;
 
 /***/ }
 /******/ ]);
